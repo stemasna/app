@@ -126,7 +126,6 @@ export default defineComponent({
         });
       } catch (e) {
         this.$q.dialog({
-          componentProps: { lista: data },
           component: OperaNegate,
         });
         console.error({ e });
