@@ -87,63 +87,59 @@
 import { defineComponent, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { t } from "boot/i18n";
+import { api } from "boot/axios";
 import { useStore } from "vuex";
 
 export default defineComponent({
   name: "LoginPage",
 
   setup() {
-    const emailRegex = /^\S+@\S+\.\S+$/;
-    const router = useRouter();
-    const store = useStore();
-    const route = useRoute();
-    const loading = ref(false);
-    const emailRef = ref(null);
-    //const checkRef = ref(null);
-    const passwordRef = ref(null);
-
-    const user = ref({
-      email: undefined,
-      password: undefined,
-    });
-
-    const notEmpty = (val) => !!val || t("common.requiredField");
-    const validEmail = (val) =>
-      emailRegex.test(val) || t("common.invalidEmail");
-
-    const isValid = () => {
+    return {
+      router: useRouter(),
+      store: useStore(),
+      route: useRoute(),
+    };
+  },
+  data() {
+    return {
+      loading: false,
+      emailRegex: /^\S+@\S+\.\S+$/,
+      user: {
+        email: undefined,
+        password: undefined,
+      },
+      emailRef: undefined,
+      passwordRef: undefined,
+      right: false,
+      isPwd: true,
+    };
+  },
+  methods: {
+    async notEmpty(val) {
+      return !!val || (await t("common.requiredField"));
+    },
+    async validEmail(val) {
+      return this.emailRegex.test(val) || (await t("common.invalidEmail"));
+    },
+    isValid() {
       const fieldsIsValid = [];
-      fieldsIsValid.push(emailRef.value.validate());
-      fieldsIsValid.push(passwordRef.value.validate());
+
+      fieldsIsValid.push(this.emailRef.value.validate());
+      fieldsIsValid.push(this.passwordRef.value.validate());
 
       return fieldsIsValid.every((f) => f === true);
-    };
-
-    const onClickLogin = async () => {
-      if (!isValid()) return;
+    },
+    async onClickLogin() {
       try {
-        loading.value = true;
-        await store.dispatch("login", user.value);
-        await router.push({ name: "TutorialPage" });
-        loading.value = false;
+        this.loading = true;
+        await this.$store.dispatch("login", this.user);
+        this.router.push({ name: "TutorialPage" });
+        this.loading = false;
       } catch (e) {
         console.error({ e });
-        loading.value = false;
+        this.loading = false;
       }
-    };
-    return {
-      router,
-      route,
-      user,
-      loading,
-      notEmpty,
-      validEmail,
-      onClickLogin,
-      emailRef,
-      passwordRef,
-      isPwd: ref(true),
-      right: ref(false),
-    };
+    },
   },
 });
 </script>

@@ -32,55 +32,38 @@
   inizio prova card-->
   <q-card class="my-card">
     <q-card-section horizontal>
-      <q-img class="col-5" src="https://cdn.quasar.dev/img/parallax1.jpg" />
-
-      <q-card-section>
-        {{ "titolo" }}
+      <q-card-section v-if="resultsArray && resultsArray.length > 0">
+        <!-- {{ "titolo" }}
         <div>{{ "autore" }}</div>
         <div>{{ "codice_ident" }}</div>
         <div>{{ "autenticità" }}</div>
-        <div>{{ "data scansione" }}</div>
-      </q-card-section>
-      <q-card-section>
-        <q-btn
-          unelevated
-          :to="{ name: 'ArtWorkDetailPage' }"
-          icon="chevron_right"
-        />
+        <div>{{ "data scansione" }}</div> -->
+
+        <ArtCard
+          v-for="result in resultsArray"
+          :id="result.id"
+          :painting="result.painting"
+          :qr="result.qr"
+          :date="result.date"
+          :key="result.id"
+        >
+        </ArtCard>
       </q-card-section>
     </q-card-section>
 
     <q-separator />
   </q-card>
 
-  <!-- <div
-    class="row"
-    style="display: flex; flex-wrap: wrap; gap: 20px"
-    v-if="resultsArray.length > 0"
-  >
-    <Card
-      v-for="result in resultsArray"
-      :key="result[`#IMDB_ID`]"
-      :title-prop="result[`#TITLE`]"
-      :actors-prop="result[`#ACTORS`]"
-      :year-prop="result[`#YEAR`]"
-      :image-prop="result[`#IMG_POSTER`]"
-    >
-    </Card>
-  </div>
-
-fine prova card-->
-
   <!-- qui finisce il body -->
   <q-footer reveal elevated class="text-black" style="background-color: white">
     <div class="row">
-      <div class="col justify-center">
+      <div class="col centro">
         <q-btn unelevated :to="{ name: 'HistoricalPage' }">
           <q-avatar size="56px" class="q-mb-sm">
             <img src="../assets/list_icon.png" /> </q-avatar
         ></q-btn>
       </div>
-      <div class="col justify-center">
+      <div class="col centro">
         <q-btn
           unelevated
           style="align-items: center"
@@ -96,29 +79,68 @@ fine prova card-->
 
 <script>
 import { defineComponent } from "vue";
+import _ from "lodash";
 import { api } from "boot/axios";
 import { useRouter } from "vue-router";
 import { mapGetters } from "vuex";
+import ArtCard from "src/components/modal/ArtCard.vue";
+
 //import ConfirmModal from "components/modals/ConfirmModal";
 
 export default defineComponent({
   name: "HistoricalPage",
+  components: {
+    ArtCard,
+  },
+  data() {
+    return {
+      loading: false,
+      resultsArray: undefined,
+    };
+  },
+
   setup() {
     return {
       router: useRouter(),
     };
   },
-  //sopra per il metod nel bottone metto
-  //@click="GoToDetail"
-  // methods: {
-  //   GoToDetail() {
-  //     this.router.push({
-  //       name: "ArtWorkDetail",
-  //       params: {
-  //         id: "new",
-  //       },
-  //     });
+  computed: {
+    ...mapGetters(["token"]),
+
+    resultsNumber: function () {
+      return this.resultsArray.length;
+    },
+  },
+  methods: {
+    async getAllArt() {
+      try {
+        this.loading = true;
+        const { data: result } = await api.get("scan/get", {});
+        this.resultsArray = result;
+        console.log({ arr: this.resultsArray });
+        this.loading = false;
+        //this.rows = data;
+      } catch (e) {
+        this.loading = false;
+        console.error({ e });
+      }
+    },
+  },
+  // watch: {
+  //   token(newValue) {
+  //     newValue && this.getAllArt();
   //   },
   // },
+  async created() {
+    await this.getAllArt();
+  },
 });
 </script>
+<style scoped lang="scss">
+.centro {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Aggiungi altri stili desiderati */
+}
+</style>

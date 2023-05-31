@@ -8,12 +8,13 @@ import store from "src/store";
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
-axios.defaults.withCredentials = true;
+
 const api = axios.create({ baseURL: process.env.API_URL });
-/*
+//console.log({ store: store });
 api.interceptors.request.use(
   (conf) => {
-    const token = store.getters.token;
+    const token = store.getters.getToken;
+
     conf.headers.Authorization =
       conf.headers.Authorization || `Bearer ${token}`;
     return conf;
@@ -21,7 +22,7 @@ api.interceptors.request.use(
   (error) => {
     return Promise.reject(error);
   }
-);*/
+);
 
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api

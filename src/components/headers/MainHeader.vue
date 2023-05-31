@@ -24,10 +24,16 @@ import { t } from "boot/i18n";
 
 export default defineComponent({
   name: "MainHeader",
+  setup() {
+    return {
+      store: useStore(),
+      $q: useQuasar(),
+      fasSignal,
+      fasWifi,
+      fasBatteryFull,
+    };
+  },
   data() {
-    const store = useStore();
-    const $q = useQuasar();
-
     const token = computed(() => store.getters.token);
 
     const toggleLeftDrawer = () => store.commit("toggleLeftDrawer");
@@ -54,13 +60,6 @@ export default defineComponent({
   methods: {},
   computed: {},
   created() {},
-  setup() {
-    return {
-      fasSignal,
-      fasWifi,
-      fasBatteryFull,
-    };
-  },
 });
 </script>
 

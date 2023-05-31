@@ -1,7 +1,7 @@
-import { store } from "quasar/wrappers";
 import createPersistedState from "vuex-persistedstate";
 import { createStore, createLogger } from "vuex";
-import user from "./auth";
+import user from "./user";
+import app from "./app";
 // import example from './module-example'
 
 /*
@@ -13,23 +13,22 @@ import user from "./auth";
  * with the Store instance.
  */
 
-export default store(function (/* { ssrContext } */) {
-  const Store = createStore({
-    modules: {
-      user,
-    },
-    plugins: [
-      createLogger(),
-      createPersistedState({
-        key: "app",
-        paths: ["user"],
-      }),
-    ],
+const store = createStore({
+  modules: {
+    user,
+    app,
+  },
+  plugins: [
+    createLogger(),
+    createPersistedState({
+      key: "app",
+      paths: ["user"],
+    }),
+  ],
 
-    // enable strict mode (adds overhead!)
-    // for dev mode and --debug builds only
-    strict: process.env.DEBUGGING,
-  });
-
-  return Store;
+  // enable strict mode (adds overhead!)
+  // for dev mode and --debug builds only
+  strict: process.env.DEBUGGING,
 });
+
+export default store;

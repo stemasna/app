@@ -1,6 +1,6 @@
 <template>
   <q-banner class="text-black">
-    <div class="row">
+    <div class="row centro">
       <div class="col">
         <q-img unelevated src="../assets/title.png" />
       </div>
@@ -27,7 +27,7 @@
   </q-banner>
 
   <!-- qui parte il body -->
-  <h4>{{ $t("common.title_scan") }}</h4>
+  <h4>{{ $t("common.title_cert") }}</h4>
   <q-input
     class="col-12 col-md-12"
     ref="codeRef"
@@ -41,18 +41,15 @@
     <q-btn
       :label="$t('common.goToScan')"
       color="primary"
-      @click="getArtQr"
+      @click="getCertQr"
       :loading="loading"
     />
   </div>
   <!-- <q-spinner-ios size="2em" /> -->
+  <h8 class="text-bold">{{ $t("common.procedure") }}</h8>
   <div>
-    <h8 class="text-bold">{{ $t("common.procedure") }}</h8>
-    <div>
-      <div class="text-caption">{{ $t("common.scan_body") }}</div>
-    </div>
+    <div class="text-caption">{{ $t("common.cert_body") }}</div>
   </div>
-
   <!-- qui finisce il body -->
   <q-footer reveal elevated class="text-black" style="background-color: white">
     <div class="row">
@@ -79,8 +76,8 @@ import { useQuasar } from "quasar";
 import { useRouter, useRoute } from "vue-router";
 import { t } from "boot/i18n";
 import { useStore } from "vuex";
-import OperaApprovate from "src/components/modal/OperaApprovate.vue";
-import OperaNegate from "src/components/modal/OperaNegate.vue";
+import CertApprovate from "src/components/modal/CertApprovate.vue";
+import CertNegate from "src/components/modal/CertNegate.vue";
 
 export default defineComponent({
   name: "ScansPage",
@@ -112,23 +109,20 @@ export default defineComponent({
 
       return fieldsIsValid.every((f) => f === true);
     },
-    onClickScan() {
-      //
-    },
-    async getArtQr() {
+
+    async getCertQr() {
       try {
+        //console.log(this.code);
         const qr = this.code;
-        const { data } = await api.get(`paintings/findbyartqr/${qr}`);
+        const { data } = await api.get(`paintings/findbycertqr/${qr}`);
         console.log({ data });
+
         this.$q.dialog({
-          component: OperaApprovate,
+          component: CertApprovate,
           componentProps: { lista: data },
         });
       } catch (e) {
-        this.$q.dialog({
-          componentProps: { lista: data },
-          component: OperaNegate,
-        });
+        this.$q.dialog({ component: CertNegate });
         console.error({ e });
       }
     },

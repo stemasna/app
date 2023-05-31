@@ -48,15 +48,35 @@ const routes = [
       //     },
       //   ],
       // },
+      // {
+      //   path: "HistoricalPage",
+      //   name: "HistoricalPage",
+      //   component: () => import("pages/HistoricalPage.vue"),
+      // },
+      {
+        path: "CertPage",
+        name: "CertPage",
+        component: () => import("pages/CertPage.vue"),
+      },
+      // {
+      //   path: "ArtWorkDetailPage",
+      //   name: "ArtWorkDetailPage",
+      //   component: () => import("pages/ArtWorkDetailPage.vue"),
+      // },
       {
         path: "HistoricalPage",
-        name: "HistoricalPage",
-        component: () => import("pages/HistoricalPage.vue"),
-      },
-      {
-        path: "ArtWorkDetailPage",
-        name: "ArtWorkDetailPage",
-        component: () => import("pages/ArtWorkDetailPage.vue"),
+        children: [
+          {
+            path: "",
+            name: "HistoricalPage",
+            component: () => import("pages/HistoricalPage.vue"),
+          },
+          {
+            path: ":id",
+            name: "ArtWorkDetailPage",
+            component: () => import("pages/ArtWorkDetailPage.vue"),
+          },
+        ],
       },
     ],
   },
